@@ -1,23 +1,23 @@
-#include "cartridge.h"
+#include    "cartridge.h"
 
-void cartridge_header::populate_raw_struct_data(uint8_t* file_data)
+void cartridge_header::populate_raw_struct_data(u8* cartridge_data)
 {
-    memcpy(header_data.entry_point, file_data + CARTRIDGE_ENTRY_POINT_START, SECTION_SIZE(CARTRIDGE_ENTRY_POINT));
-    memcpy(header_data.nintendo_logo_data, file_data + CARTRIDGE_NINTENDO_LOGO_START, SECTION_SIZE(CARTRIDGE_NINTENDO_LOGO));    
-    memcpy(header_data.cartridge_title_superset, file_data + CARTRIDGE_TITLE_SUPERSET_START, SECTION_SIZE(CARTRIDGE_TITLE_SUPERSET));
-    memcpy(header_data.cartridge_manufacturer_code, file_data + CARTRIDGE_MANUFACTURER_CODE_START, SECTION_SIZE(CARTRIDGE_MANUFACTURER_CODE));
-    memcpy(header_data.new_licensee_code, file_data + CARTRIDGE_NEW_LICENSEE_CODE_START, SECTION_SIZE(CARTRIDGE_NEW_LICENSEE_CODE));
-    memcpy(header_data.global_checksum, file_data + CARTRIDGE_GLOBAL_CHECKSUM_START, SECTION_SIZE(CARTRIDGE_GLOBAL_CHECKSUM));
+    memcpy(header_data.entry_point, cartridge_data + CARTRIDGE_ENTRY_POINT_START, SECTION_SIZE(CARTRIDGE_ENTRY_POINT));
+    memcpy(header_data.nintendo_logo_data, cartridge_data + CARTRIDGE_NINTENDO_LOGO_START, SECTION_SIZE(CARTRIDGE_NINTENDO_LOGO));    
+    memcpy(header_data.cartridge_title_superset, cartridge_data + CARTRIDGE_TITLE_SUPERSET_START, SECTION_SIZE(CARTRIDGE_TITLE_SUPERSET));
+    memcpy(header_data.cartridge_manufacturer_code, cartridge_data + CARTRIDGE_MANUFACTURER_CODE_START, SECTION_SIZE(CARTRIDGE_MANUFACTURER_CODE));
+    memcpy(header_data.new_licensee_code, cartridge_data + CARTRIDGE_NEW_LICENSEE_CODE_START, SECTION_SIZE(CARTRIDGE_NEW_LICENSEE_CODE));
+    memcpy(header_data.global_checksum, cartridge_data + CARTRIDGE_GLOBAL_CHECKSUM_START, SECTION_SIZE(CARTRIDGE_GLOBAL_CHECKSUM));
 
-    header_data.cgb_flag = file_data[CARTRIDGE_CGB_FLAG];
-    header_data.sgb_flag = file_data[CARTRIDGE_SGB_FLAG];
-    header_data.cartridge_type_data = file_data[CARTRIDGE_TYPE];
-    header_data.rom_size_data = file_data[CARTRIDGE_ROM_SIZE];
-    header_data.ram_size_data = file_data[CARTRIDGE_RAM_SIZE];
-    header_data.destination_code = file_data[CARTRIDGE_DESTINATION_CODE];
-    header_data.old_licensee_code = file_data[CARTRIDGE_OLD_LICENSEE_CODE];
-    header_data.mask_rom_version_number = file_data[CARTRIDGE_MASK_ROM_VERSION];
-    header_data.header_checksum = file_data[CARTRIDGE_HEADER_CHECKSUM];
+    header_data.cgb_flag = cartridge_data[CARTRIDGE_CGB_FLAG];
+    header_data.sgb_flag = cartridge_data[CARTRIDGE_SGB_FLAG];
+    header_data.cartridge_type_data = cartridge_data[CARTRIDGE_TYPE];
+    header_data.rom_size_data = cartridge_data[CARTRIDGE_ROM_SIZE];
+    header_data.ram_size_data = cartridge_data[CARTRIDGE_RAM_SIZE];
+    header_data.destination_code = cartridge_data[CARTRIDGE_DESTINATION_CODE];
+    header_data.old_licensee_code = cartridge_data[CARTRIDGE_OLD_LICENSEE_CODE];
+    header_data.mask_rom_version_number = cartridge_data[CARTRIDGE_MASK_ROM_VERSION];
+    header_data.header_checksum = cartridge_data[CARTRIDGE_HEADER_CHECKSUM];
 }
 
 bool cartridge_header::nintendo_logo_check()
@@ -139,19 +139,19 @@ bool cartridge_header::ram_size_parse()
 
     return true;
 }
-bool cartridge_header::header_checksum_verify(uint8_t* file_data)
+bool cartridge_header::header_checksum_verify(u8* cartridge_data)
 {
-    uint8_t checksum = 0;
+    u8 checksum = 0;
     
-    for(uint32_t i = 0x0134; i <= 0x014C; i++)
+    for(u16 i = 0x0134; i <= 0x014C; i++)
     {
-        checksum = checksum - file_data[i] - 1;
+        checksum = checksum - cartridge_data[i] - 1;
     }
 
     return (checksum == header_data.header_checksum);
 }
 
-void cartridge_header::derive_header_data(uint8_t* file_data)
+void cartridge_header::derive_header_data(u8* cartridge_data)
 {
     header_data.is_header_valid = true;
 
@@ -169,8 +169,8 @@ void cartridge_header::derive_header_data(uint8_t* file_data)
         header_data.is_header_valid = (header_data.is_header_valid & ram_size_parse());
     }
 
-    header_data.header_checksum_clear = header_checksum_verify(file_data);
-    header_data.is_bootable = header_checksum_verify(file_data);
+    header_data.header_checksum_clear = header_checksum_verify(cartridge_data);
+    header_data.is_bootable = header_checksum_verify(cartridge_data);
 
     header_data.global_checksum_clear = true;
 }
@@ -200,15 +200,15 @@ bool cartridge_header::is_timer_present()
     return header_data.is_timer_present;
 }
 
-cartridge_header::mbc_type_enum cartridge_header::get_mbc_type()
+mbc_type_enum cartridge_header::get_mbc_type()
 {
     return header_data.mbc_type;
 } 
-uint32_t cartridge_header::get_rom_size()
+u32 cartridge_header::get_rom_size()
 {
     return header_data.rom_size;
 } 
-uint32_t cartridge_header::get_ram_size()
+u32 cartridge_header::get_ram_size()
 {
     return header_data.ram_size;
 } 
