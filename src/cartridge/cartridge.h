@@ -1,4 +1,3 @@
-#include    <cstdint>
 #include    <cstring>
 
 #include    "../typedefs.h"
@@ -51,12 +50,12 @@ class cartridge_header
     {
         bool            is_header_valid;
 
-        u8              entry_point[4];
-        u8              nintendo_logo_data[48];
-        u8              cartridge_title_superset[16];
-        u8              cartridge_manufacturer_code[4];
+        u8              entry_point[SECTION_SIZE(CARTRIDGE_ENTRY_POINT)];
+        u8              nintendo_logo_data[SECTION_SIZE(CARTRIDGE_NINTENDO_LOGO)];
+        u8              cartridge_title_superset[SECTION_SIZE(CARTRIDGE_TITLE_SUPERSET)];
+        u8              cartridge_manufacturer_code[SECTION_SIZE(CARTRIDGE_MANUFACTURER_CODE)];
         u8              cgb_flag;
-        u8              new_licensee_code[2];
+        u8              new_licensee_code[SECTION_SIZE(CARTRIDGE_NEW_LICENSEE_CODE)];
         u8              sgb_flag;
         u8              cartridge_type_data;
         u8              rom_size_data;
@@ -65,7 +64,7 @@ class cartridge_header
         u8              old_licensee_code;
         u8              mask_rom_version_number;
         u8              header_checksum;
-        u8              global_checksum[2];
+        u8              global_checksum[SECTION_SIZE(CARTRIDGE_GLOBAL_CHECKSUM)];
 
         bool            nintendo_logo_match;
         bool            valid_cartridge_type;

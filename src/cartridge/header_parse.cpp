@@ -42,58 +42,58 @@ bool cartridge_header::cartridge_type_parse()
 // skipping unimplemented cases 0x08 and 0x09, as well as unimplemented MBCs [for now?]
     switch(header_data.cartridge_type_data)
     {
-        case 0x00:
+        case    0x00:
             break;
-        case 0x01: 
+        case    0x01: 
             header_data.mbc_type = MBC_1;
             break;
-        case 0x02:
+        case    0x02:
             header_data.mbc_type = MBC_1;
             header_data.is_ram_present = true;
             break;
-        case 0x03:
+        case    0x03:
             header_data.mbc_type = MBC_1;
             header_data.is_ram_present = true;
             header_data.is_battery_present = true;
             break;
-        case 0x05:
+        case    0x05:
             header_data.mbc_type = MBC_2;
             break; 
-        case 0x06:
+        case    0x06:
             header_data.mbc_type = MBC_2;
             header_data.is_battery_present = true;
             break;
-        case 0x0F:
+        case    0x0F:
             header_data.mbc_type = MBC_3;
             header_data.is_timer_present = true;
             header_data.is_battery_present = true;
             break;
-        case 0x10:
+        case    0x10:
             header_data.mbc_type = MBC_3;
             header_data.is_timer_present = true;
             header_data.is_ram_present = true;
             header_data.is_battery_present = true;
             break;
-        case 0x11:
+        case    0x11:
             header_data.mbc_type = MBC_3;
             break;
-        case 0x12:
+        case    0x12:
             header_data.mbc_type = MBC_3;
             header_data.is_ram_present = true;
             break;
-        case 0x13:
+        case    0x13:
             header_data.mbc_type = MBC_3;
             header_data.is_ram_present = true;
             header_data.is_battery_present = true;
             break;
-        case 0x19:
+        case    0x19:
             header_data.mbc_type = MBC_5;   
             break;
-        case 0x1A:
+        case    0x1A:
             header_data.mbc_type = MBC_5;
             header_data.is_ram_present = true;
             break;
-        case 0x1B:
+        case    0x1B:
             header_data.mbc_type = MBC_5;
             header_data.is_ram_present = true;
             header_data.is_battery_present = true;
