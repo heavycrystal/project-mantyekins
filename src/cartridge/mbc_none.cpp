@@ -1,22 +1,23 @@
-#include    "cartridge.h"
+#include    "mbc_none.hpp"
+#include <memory>
 
-class mbc_none: public mbc_subsystem
-{
-    public:
+no_mbc_cartridge_t::no_mbc_cartridge_t(std::unique_ptr<u8[]> cartridge_rom, size_t rom_size, size_t ram_size): gb_cartridge_t(std::move(cartridge_rom), rom_size, ram_size) {}
 
-    mbc_none() = delete;
-    mbc_none(u8* cartridge_data, u8* cartridge_sram): mbc_subsystem(cartridge_data, cartridge_sram)
-    {
-
+u8 no_mbc_cartridge_t::cartridge_read(u16 address) {
+    if(address <= 0x7FFF) {
+        return full_cartridge_rom[address];
     }
+    else if(BOUNDS_CHECK(address, 0xA000, 0xBFFF)) {
+        assert((address - 0xA000) < this->ram_size);
+        return full_cartridge_ram[address - 0xA000];
+    }
+    UNREACHABLE_;
+}
 
-    u8 read_byte(u16 address)
-    {
-        return mbc_subsystem_internal_common.cartridge_data[address];
+void no_mbc_cartridge_t::cartridge_write(u16 address, u8 value) {
+    if(BOUNDS_CHECK(address, 0xA000, 0xBFFF)) {
+        assert((address - 0xA000) < this->ram_size);
+        full_cartridge_ram[address - 0xA000] = value;
     }
-    void write_byte(u16 address, u8 value)
-    {
-        mbc_subsystem_internal_common.cartridge_data[address] = value;
-        return;
-    }
-};
+    UNREACHABLE_;
+}

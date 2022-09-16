@@ -1,0 +1,7 @@
+#define     FILE_OPEN_ERROR         "Error opening cartridge file. Aborting.\n"
+#define     FILE_READ_ERROR         "Error reading cartridge file. Aborting.\n"
+#define     FILE_CLOSE_ERROR        "Error closing cartridge file. Aborting.\n"
+#define     ROM_SIZE_INVALID_ERROR  "ROM size is smaller than expected. Aborting.\n"
+#define     ROM_UNSUPPORTED_ERROR   "ROM is not of a supported type. Aborting.\n"
+#define     ROM_CHECKSUM_ERROR      "ROM header checksum did not match. Aborting.\n"
+#define     INVALID_OPCODE_ERROR    "Invalid or unimplemented opcode. Aborting.\n"
