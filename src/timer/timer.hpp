@@ -4,7 +4,7 @@
 #include    "../ioregs/ioregs.hpp"
 
 /* Timer macros */
-#define     TIMER_ENABLE(input)         BIT_CUT(input, 2, 1)
+#define     TIMER_ENABLE(input)         GET_BIT(input, 2)
 #define     TIMA_DIV_FACTOR(input)      TERNARY_4_WAY(BIT_CUT(input, 0, 2), 1024, 16, 64, 256)          
 #define     TIMA_DIV_FACTOR_BITS(input) TERNARY_4_WAY(BIT_CUT(input, 0, 2), 10, 4, 6, 8)
 

@@ -1,6 +1,5 @@
 #include    "cartridge_load.hpp"
-#include "cartridge.hpp"
-#include    <memory>
+#include    "cartridge.hpp"
 
 /*  Open a given file, check if it is a valid cartridge ROM size as we expect, and then load it to memory.
     Checks if opened file in fact a valid GB cartridge and also one that we do support, via rudimentary header checks.

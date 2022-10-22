@@ -7,6 +7,7 @@
 #include    <cassert>
 
 #include    <memory>
+#include    <algorithm>
 
 typedef     uint8_t     u8;
 typedef     uint16_t    u16;
@@ -24,6 +25,10 @@ typedef     uint64_t    u64;
 /*  Lobs off cut bits from input, and returns the count lowermost bits. 
     Generating bitmasks like this is not ideal, but hoping for constant folding to optimize it away. */
 #define     BIT_CUT(input, cut, count)  (((input) >> (cut)) & ((1 << (count)) - 1))
+#define     GET_BIT(input, bit)         BIT_CUT(input, bit, 1)
+#define     BIT_IS_SET(input, bit)      (GET_BIT(input, bit) == 1)
+#define     BIT_IS_CLR(input, bit)      (GET_BIT(input, bit) == 0)
+
 #define     TRUNC_ADD(input1, input2)   ((input1 + input2) & 0xFF)
 
 #define     TERNARY_4_WAY(cond, output_0, output_1, output_2, output_3) ((cond >= 2) ? ((cond == 2) ? output_2 : output_3) : ((cond == 0) ? output_0 : output_1))

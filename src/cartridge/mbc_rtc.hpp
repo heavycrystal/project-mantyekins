@@ -31,5 +31,5 @@ class mbc_rtc_t {
     mbc_rtc_t();
     mbc_rtc_t(u8* input);
 
-    void tick(void);
+    void cycle_advance(void);
 };

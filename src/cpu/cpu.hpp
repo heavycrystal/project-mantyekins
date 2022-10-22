@@ -5,7 +5,6 @@
 #include    "../ioregs/ioregs.hpp"
 #include    "../memory/memory.hpp"
 #include    "../timer/timer.hpp"
-#include <cstdint>
 
 class gb_cpu_t {
     private:
@@ -21,7 +20,7 @@ class gb_cpu_t {
     u16_as_u8_t scratch;
     bool interrupt_master_enable = false;
     bool is_halted = false;
-    enum {
+    enum : u8 {
         IME_UNSET,
         IME_SETTING1,
         IME_SETTING2,

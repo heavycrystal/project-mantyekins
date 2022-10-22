@@ -7,10 +7,10 @@
 #define     _SP                     this->sp.as_u16
 #define     _PC                     this->pc.as_u16
 
-#define     _ZF                     BIT_CUT(this->af.as_u8.lower, 7, 1)
-#define     _NF                     BIT_CUT(this->af.as_u8.lower, 6, 1)
-#define     _HF                     BIT_CUT(this->af.as_u8.lower, 5, 1)
-#define     _CF                     BIT_CUT(this->af.as_u8.lower, 4, 1)
+#define     _ZF                     GET_BIT(this->af.as_u8.lower, 7)
+#define     _NF                     GET_BIT(this->af.as_u8.lower, 6)
+#define     _HF                     GET_BIT(this->af.as_u8.lower, 5)
+#define     _CF                     GET_BIT(this->af.as_u8.lower, 4)
 
 #define     ZF_SET                  SET_BIT(_F, 7)
 #define     ZF_CLR                  CLR_BIT(_F, 7)
@@ -61,7 +61,7 @@
                                         this->cycle_count++
 
                                         /*  implementing the condition lookup table in terms of macros, look at the decoding document for more information */
-#define     CONDITION(cond_code)   ((1 - BIT_CUT(cond_code, 0, 1)) ^ ((BIT_CUT(cond_code, 1, 1) == 1) ? _CF : _ZF))
+#define     CONDITION(cond_code)   ((1 - GET_BIT(cond_code, 0)) ^ (BIT_IS_SET(cond_code, 1) ? _CF : _ZF))
 
 /* implementing the register lookup tables in terms of macros, look at the decoding document for more information */
 #define     R8_LHALF(reg_code)          TERNARY_4_WAY(reg_code, this->bc.as_u8.upper, this->bc.as_u8.lower, this->de.as_u8.upper, this->de.as_u8.lower)
@@ -101,7 +101,7 @@ void gb_cpu_t::handle_interrupts(gb_memory_t* gb_memory, gb_timer_t* gb_timer, g
         0x60 -> Joypad 
         Decreasing priority from up to down. The HALT bug has not been implemented. */
     for(int loop_var = 0; loop_var < 5; loop_var++) {
-        if(BIT_CUT(gb_ioregs->as_name.ie, loop_var, 1) & BIT_CUT(gb_ioregs->as_name.iflag, loop_var, 1)) {
+        if(GET_BIT(gb_ioregs->as_name.ie, loop_var) & GET_BIT(gb_ioregs->as_name.iflag, loop_var)) {
 #if ENABLE_INTERRUPT_STEP
             printf("Interupt fired: %02x. Entering single stepping mode.\n", loop_var);
             is_stepping = true;
@@ -284,7 +284,7 @@ void gb_cpu_t::fetch_and_execute_instruction(gb_memory_t* gb_memory, gb_timer_t*
             break;
         }
         case X_(0b000, 0111): { // RLCA; RLA;
-            uint8_t high_bit = BIT_CUT(_A, 7, 1);
+            uint8_t high_bit = GET_BIT(_A, 7);
             _A = (_A << 1) | ((OP_BIT(4, 1) == 1) ? _CF : high_bit);
             ZF_CLR;
             NF_CLR;
@@ -293,7 +293,7 @@ void gb_cpu_t::fetch_and_execute_instruction(gb_memory_t* gb_memory, gb_timer_t*
             break;
         }
         case X_(0b000, 1111): { // RRCA; RRA;
-            uint8_t low_bit = BIT_CUT(_A, 0, 1);
+            uint8_t low_bit = GET_BIT(_A, 0);
             _A = (_A >> 1) | (((OP_BIT(4, 1) == 1) ? _CF : low_bit) << 7);
             ZF_CLR;
             NF_CLR;
@@ -534,7 +534,7 @@ void gb_cpu_t::fetch_and_execute_instruction(gb_memory_t* gb_memory, gb_timer_t*
                 switch(OP_BIT(0, 6)) {
                     case XXX_(0b000, ): // RLC r8;
                     case XXX_(0b010, ): { // RL r8;
-                        uint8_t high_bit = BIT_CUT(R8(OP_BIT(0, 3)), 7, 1);
+                        uint8_t high_bit = GET_BIT(R8(OP_BIT(0, 3)), 7);
                         R8(OP_BIT(0, 3)) = (R8(OP_BIT(0, 3)) << 1) | ((OP_BIT(4, 1) == 1) ? _CF : high_bit);
                         ZF_CHECK(R8(OP_BIT(0, 3)), 0);
                         NF_CLR;
@@ -544,7 +544,7 @@ void gb_cpu_t::fetch_and_execute_instruction(gb_memory_t* gb_memory, gb_timer_t*
                     }
                     case XXX_(0b001, ): // RRC r8;
                     case XXX_(0b011, ): { // RR r8;
-                        uint8_t low_bit = BIT_CUT(R8(OP_BIT(0, 3)), 0, 1);
+                        uint8_t low_bit = GET_BIT(R8(OP_BIT(0, 3)), 0);
                         R8(OP_BIT(0, 3)) = (R8(OP_BIT(0, 3)) >> 1) | (((OP_BIT(4, 1) == 1) ? _CF : low_bit) << 7);
                         ZF_CHECK(R8(OP_BIT(0, 3)), 0);
                         NF_CLR;
@@ -562,8 +562,8 @@ void gb_cpu_t::fetch_and_execute_instruction(gb_memory_t* gb_memory, gb_timer_t*
                     }
                     case XXX_(0b101, ): // SRA r8;
                     case XXX_(0b111, ): { // SRL r8;
-                        (BIT_CUT(R8(OP_BIT(0, 3)), 0, 1) == 1) ? CF_SET : CF_CLR;
-                        R8(OP_BIT(0, 3)) = (R8(OP_BIT(0, 3)) >> 1) | ((OP_BIT(4, 1) == 0) ? (BIT_CUT(R8(OP_BIT(0, 3)), 7, 1) << 7) : 0);
+                        BIT_IS_SET(R8(OP_BIT(0, 3)), 0) ? CF_SET : CF_CLR;
+                        R8(OP_BIT(0, 3)) = (R8(OP_BIT(0, 3)) >> 1) | ((OP_BIT(4, 1) == 0) ? (GET_BIT(R8(OP_BIT(0, 3)), 7) << 7) : 0);
                         ZF_CHECK(R8(OP_BIT(0, 3)), 0);
                         NF_CLR;
                         HF_CLR;
@@ -586,7 +586,7 @@ void gb_cpu_t::fetch_and_execute_instruction(gb_memory_t* gb_memory, gb_timer_t*
                 if(OP_BIT(0, 3) == 6) {
                     SYNC_READ_HL_;
                 }    
-                (BIT_CUT(R8(OP_BIT(0, 3)), OP_BIT(3, 3), 1) == 0) ? ZF_SET : ZF_CLR;
+                BIT_IS_CLR(R8(OP_BIT(0, 3)), OP_BIT(3, 3)) ? ZF_SET : ZF_CLR;
                 NF_CLR;
                 HF_SET;           
             }

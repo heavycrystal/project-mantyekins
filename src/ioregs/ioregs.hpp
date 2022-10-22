@@ -5,6 +5,12 @@
 /*  Extra register for interrupt enable [IE], which is located at 0xFFFF */
 #define     IO_REGISTERS_ADDRESS_SIZE   (128 + 1)
 
+#define     VBLANK_INTERRUPT    0
+#define     STAT_INTERRUPT      1
+#define     TIMER_INTERRUPT     2
+#define     SERIAL_INTERRUPT    3
+#define     JOYPAD_INTERRUPT    4
+
 /*  To improve code readability, the IO registers memory array is in a union with a struct that contains the actual names of these 
     IO registers, the names, default values and information. Unmapped registers are read as 0xFF and writes are ignored.
     This is a major component of the emulator's state, and mutable pointers are held by multiple components */

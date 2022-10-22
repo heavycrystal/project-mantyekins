@@ -54,7 +54,7 @@ void mbc1_cartridge_t::cartridge_write(const u16 address, const u8 value) {
         }
     }
     else if(address <= 0x7FFF) {
-        banking_mode_select = BIT_CUT(value, 0, 1);
+        banking_mode_select = GET_BIT(value, 0);
         if(banking_mode_select == 0) {
             current_lower_rom_bank = 0x00;
             current_ram_bank = 0x00;

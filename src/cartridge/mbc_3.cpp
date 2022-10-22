@@ -71,7 +71,7 @@ void mbc3_cartridge_t::cartridge_write(const u16 address, const u8 value) {
         }
         else if(BOUNDS_CHECK(current_ram_rtc_bank, 0x08, 0x0C)) {
             /*  Pandocs claims halt flag should be set before writing to RTC registers */
-            if(BIT_CUT(gb_rtc->data.as_name.day_high_status, 6, 1) == 1) {
+            if(BIT_IS_SET(gb_rtc->data.as_name.day_high_status, 6)) {
                 gb_rtc_latched.data.as_raw[current_ram_rtc_bank - 0x08] = value;
             }
             INVALID_WRITE_;

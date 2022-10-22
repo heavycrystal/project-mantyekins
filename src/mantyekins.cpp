@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     
     while(gb_cpu.ro_cycle_count < (1 << 26)) {
 #if ENABLE_EXEC_BREAKPOINTS
-        for(uint16_t loop_var : EXEC_BREAKPOINTS) {
+        for(u16 loop_var : EXEC_BREAKPOINTS) {
             if(gb_cpu.pc.as_u16 == loop_var) {
                 fprintf(stderr, "Execution breakpoint reached at %04x, entering single stepping mode.\n", loop_var);
                 is_stepping = true;

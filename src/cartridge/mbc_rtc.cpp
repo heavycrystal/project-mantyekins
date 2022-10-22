@@ -8,7 +8,7 @@ mbc_rtc_t::mbc_rtc_t(u8* input) {
     memcpy(&this->data.as_raw, input, sizeof(this->data.as_raw));
 }
 
-void mbc_rtc_t::tick(void) {
+void mbc_rtc_t::cycle_advance(void) {
     subsecond_ticks++;
     if(subsecond_ticks == CYCLES_PER_SECOND) {
         subsecond_ticks = 0;
@@ -25,7 +25,7 @@ void mbc_rtc_t::tick(void) {
                     if(data.as_name.days_low == 0x00) {
                         //  replace bit offsets with named values
                         /*  sets the 9th bit of day counter if not already, otherwise sets the overflow bit */
-                        SET_BIT(data.as_name.day_high_status, (BIT_CUT(data.as_name.day_high_status, 0, 1) == 1) ? 7 : 0);
+                        SET_BIT(data.as_name.day_high_status, (GET_BIT(data.as_name.day_high_status, 0) == 1) ? 7 : 0);
                     }
                 }
             }
